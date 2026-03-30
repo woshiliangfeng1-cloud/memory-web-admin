@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Database, Search, Tag, Settings, ArrowDownUp, Brain } from 'lucide-react'
+import { LayoutDashboard, Database, Search, Tag, Settings, ArrowDownUp, Brain, LogOut } from 'lucide-react'
 
 const links = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -10,7 +10,16 @@ const links = [
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
-export default function Sidebar() {
+interface Props {
+  onLogout?: () => void
+}
+
+export default function Sidebar({ onLogout }: Props) {
+  const handleLogout = async () => {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' })
+    onLogout?.()
+  }
+
   return (
     <aside className="w-56 shrink-0 border-r border-dracula-current bg-dracula-darker flex flex-col">
       <div className="flex items-center gap-2 px-5 py-4 border-b border-dracula-current">
@@ -36,8 +45,15 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="px-5 py-3 text-xs text-dracula-comment border-t border-dracula-current">
-        Memory MCP Admin v1.0
+      <div className="px-5 py-3 border-t border-dracula-current flex items-center justify-between">
+        <span className="text-xs text-dracula-comment">v1.0</span>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-1.5 text-xs text-dracula-comment hover:text-dracula-red transition-colors"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          Logout
+        </button>
       </div>
     </aside>
   )
